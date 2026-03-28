@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InsightMail — Upload CSV</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+      <div class="logo">🧾 InsightMail</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="login.html" class="btn-logout">Logout</a></li>
+      </ul>
+    </nav>
+
+    <!-- ── Main Container ── -->
+    <div class="container">
+      <!-- ── Page Header ── -->
+      <div class="page-header">
+        <h1>Upload CSV</h1>
+        <p>
+          Upload your data file, preview charts and send the report via email.
+        </p>
+      </div>
+
+      <!-- ── Upload Card ── -->
+      <div class="upload-card">
+        <!-- ── Upload Zone ── -->
+        <div
+          class="upload-zone"
+          id="uploadZone"
+          ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)"
+          ondrop="handleDrop(event)"
+        >
+          <input
+            type="file"
+            id="csvFile"
+            accept=".csv"
+            onchange="handleFileSelect(event)"
+          />
+          <div class="upload-icon">📂</div>
+          <h3>Click to upload or drag & drop</h3>
+          <p>Supports .csv files only — max 5MB</p>
+        </div>
+
+        <!-- ── File Preview ── -->
+        <div class="file-preview" id="filePreview">
+          <div class="file-icon">📄</div>
+          <div class="file-info">
+            <div class="file-name" id="fileName">filename.csv</div>
+            <div class="file-size" id="fileSize">0 KB</div>
+          </div>
+          <button class="file-remove" onclick="removeFile()">✕</button>
+        </div>
+
+        <!-- ── Report Details ── -->
+        <div class="section-label">Report Details</div>
+
+        <div class="form-group">
+          <label>Report Title</label>
+          <input
+            type="text"
+            id="reportTitle"
+            placeholder="e.g. January Sales Report"
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Recipient Email</label>
+            <input
+              type="email"
+              id="recipientEmail"
+              placeholder="manager@email.com"
+            />
+          </div>
+          <div class="form-group">
+            <label>Chart Type</label>
+            <select id="chartType">
+              <option value="bar">Bar Chart</option>
+              <option value="pie">Pie Chart</option>
+              <option value="line">Line Chart</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Message (optional)</label>
+          <textarea
+            id="emailMessage"
+            placeholder="Add a short message to include in the email..."
+          ></textarea>
+        </div>
+
+        <!-- ── Action Buttons ── -->
+        <div class="actions">
+          <button class="btn-secondary" onclick="previewChart()">
+            Preview Chart
+          </button>
+          <button class="btn-primary" onclick="sendReport()">
+            Generate & Send Report
+          </button>
+        </div>
+
+        <!-- ── Progress Bar ── -->
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-label" id="progressLabel">
+            Generating report...
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-status" id="progressStatus">Please wait...</div>
+        </div>
+
+        <!-- ── Success Banner ── -->
+        <div class="success-banner" id="successBanner">
+          <h3>Report Sent Successfully!</h3>
+          <p id="successMsg">Your report has been sent.</p>
+        </div>
+
+        <!-- ── Error Banner ── -->
+        <div class="error-banner" id="errorBanner">
+          Please fill in all required fields and upload a CSV file.
+        </div>
+      </div>
+
+      <!-- ── Tips Box ── -->
+      <div class="tips-box">
+        <h4>Tips for best results</h4>
+        <ul>
+          <li>First row of your CSV should be column headers</li>
+          <li>Use numeric values in data columns for accurate charts</li>
+          <li>Keep file size under 5MB for faster processing</li>
+          <li>Double check the recipient email before sending</li>
+          <li>Add a clear report title so recipients know what it's about</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── JS ── -->
+    <script src="js/csvParser.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+      let selectedFile = null;
+
+      function handleFileSelect(event) {
+        let file = event.target.files[0];
+        if (file) showFilePreview(file);
+      }
+
+      function handleDragOver(event) {
+        event.preventDefault();
+        document.getElementById("uploadZone").classList.add("dragover");
+      }
+
+      function handleDragLeave(event) {
+        document.getElementById("uploadZone").classList.remove("dragover");
+      }
+
+      function handleDrop(event) {
+        event.preventDefault();
+        document.getElementById("uploadZone").classList.remove("dragover");
+        let file = event.dataTransfer.files[0];
+        if (file && file.name.endsWith(".csv")) {
+          showFilePreview(file);
+        } else {
+          showError("Please upload a valid .csv file.");
+        }
+      }
+
+      function showFilePreview(file) {
+        selectedFile = file;
+        document.getElementById("fileName").textContent = file.name;
+        document.getElementById("fileSize").textContent = formatFileSize(
+          file.size,
+        );
+        document.getElementById("filePreview").classList.add("show");
+        document.getElementById("uploadZone").style.display = "none";
+        hideMessages();
+      }
+
+      function removeFile() {
+        selectedFile = null;
+        document.getElementById("csvFile").value = "";
+        document.getElementById("filePreview").classList.remove("show");
+        document.getElementById("uploadZone").style.display = "block";
+        hideMessages();
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+      }
+
+      function previewChart() {
+        if (!selectedFile) {
+          showError("Please upload a CSV file first.");
+          return;
+        }
+        alert("Chart preview will be available once connected to the backend!");
+      }
+
+      function sendReport() {
+        let title = document.getElementById("reportTitle").value;
+        let email = document.getElementById("recipientEmail").value;
+        hideMessages();
+        if (!selectedFile) {
+          showError("Please upload a CSV file.");
+          return;
+        }
+        if (title === "" || email === "") {
+          showError("Please fill in all required fields.");
+          return;
+        }
+
+        let progressWrap = document.getElementById("progressWrap");
+        let progressFill = document.getElementById("progressFill");
+        let progressLabel = document.getElementById("progressLabel");
+        let progressStatus = document.getElementById("progressStatus");
+        progressWrap.classList.add("show");
+
+        let steps = [
+          { width: "25%", label: "Reading CSV data...", status: "Step 1 of 4" },
+          {
+            width: "50%",
+            label: "Generating charts...",
+            status: "Step 2 of 4",
+          },
+          {
+            width: "75%",
+            label: "Creating PDF report...",
+            status: "Step 3 of 4",
+          },
+          { width: "100%", label: "Sending email...", status: "Step 4 of 4" },
+        ];
+
+        let i = 0;
+        let interval = setInterval(function () {
+          if (i < steps.length) {
+            progressFill.style.width = steps[i].width;
+            progressLabel.textContent = steps[i].label;
+            progressStatus.textContent = steps[i].status;
+            i++;
+          } else {
+            clearInterval(interval);
+            progressWrap.classList.remove("show");
+            document.getElementById("successMsg").textContent =
+              "Your report has been sent to " + email + " successfully!";
+            document.getElementById("successBanner").classList.add("show");
+          }
+        }, 800);
+      }
+
+      function showError(msg) {
+        let errorBanner = document.getElementById("errorBanner");
+        errorBanner.textContent = msg;
+        errorBanner.classList.add("show");
+      }
+
+      function hideMessages() {
+        document.getElementById("successBanner").classList.remove("show");
+        document.getElementById("errorBanner").classList.remove("show");
+        document.getElementById("progressWrap").classList.remove("show");
+      }
+    </script>
+  </body>
+</html>

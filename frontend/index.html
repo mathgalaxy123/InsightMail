@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InsightMail — Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+      <div class="logo">🧾 InsightMail</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="login.html" class="btn-logout">Logout</a></li>
+      </ul>
+    </nav>
+
+    <!-- ── Main Container ── -->
+    <div class="container">
+      <!-- ── Welcome Banner ── -->
+      <div class="welcome-banner">
+        <h1>Welcome, Bipin 👋</h1>
+        <p>Here's your InsightMail overview for today.</p>
+      </div>
+
+      <!-- ── Stats Cards ── -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <h3>Total Reports</h3>
+          <p class="stat-number">12</p>
+        </div>
+        <div class="stat-card">
+          <h3>Emails Sent</h3>
+          <p class="stat-number">9</p>
+        </div>
+        <div class="stat-card">
+          <h3>Last Report</h3>
+          <p class="stat-number last">Today</p>
+        </div>
+      </div>
+
+      <!-- ── Recent Activity ── -->
+      <div class="section-title">Recent Activity</div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-left">
+            <div class="activity-icon">📊</div>
+            <div>
+              <div class="activity-name">sales_jan.csv</div>
+              <div class="activity-email">Sent to: manager@email.com</div>
+            </div>
+          </div>
+          <div class="activity-right">
+            <div class="activity-time">27 Mar, 10:30 AM</div>
+            <span class="badge sent">Sent</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-left">
+            <div class="activity-icon">📊</div>
+            <div>
+              <div class="activity-name">expenses_feb.csv</div>
+              <div class="activity-email">Sent to: finance@email.com</div>
+            </div>
+          </div>
+          <div class="activity-right">
+            <div class="activity-time">26 Mar, 3:15 PM</div>
+            <span class="badge sent">Sent</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-left">
+            <div class="activity-icon">📊</div>
+            <div>
+              <div class="activity-name">marks_report.csv</div>
+              <div class="activity-email">Sent to: hod@college.com</div>
+            </div>
+          </div>
+          <div class="activity-right">
+            <div class="activity-time">25 Mar, 9:00 AM</div>
+            <span class="badge failed">Failed</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Quick Action Buttons ── -->
+      <div class="actions">
+        <a href="upload.html" class="btn-primary">Upload CSV</a>
+        <a href="history.html" class="btn-secondary">View History</a>
+      </div>
+    </div>
+
+    <!-- ── JS ── -->
+    <script src="js/api.js"></script>
+  </body>
+</html>
