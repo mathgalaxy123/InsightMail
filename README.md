@@ -103,9 +103,13 @@ frontend/index.html in your browser
 | 👨‍💻 Bipin Yashasvi | Full Stack Developer |
 
 🌟 Future Enhancements
+
 📈 Advanced analytics (AI insights)
+
 ☁️ Cloud deployment (AWS/Docker)
+
 📊 More chart customization
+
 📱 Mobile responsiveness
 
 📜 License
