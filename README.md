@@ -104,13 +104,14 @@ frontend/index.html in your browser
 
 🌟 Future Enhancements
 
-📈 Advanced analytics (AI insights)
+1. 📈 Advanced analytics (AI insights)
 
-☁️ Cloud deployment (AWS/Docker)
+2. ☁️ Cloud deployment (AWS/Docker)
 
-📊 More chart customization
+3. 📊 More chart customization
 
-📱 Mobile responsiveness
+4. 📱 Mobile responsiveness
+   
 
 📜 License
 
