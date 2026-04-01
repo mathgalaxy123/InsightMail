@@ -84,6 +84,7 @@ cd InsightMail/backend
 
 # Run Spring Boot server
 mvn spring-boot:run
+```
 
 ##👉 Then open:
 frontend/index.html in your browser
