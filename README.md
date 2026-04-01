@@ -89,6 +89,7 @@ mvn spring-boot:run
 👉 Then open:
 frontend/index.html in your browser
 
+---
 ## 📧 How It Works
 
 1. Upload a CSV file through the UI.  
@@ -98,12 +99,14 @@ frontend/index.html in your browser
 5. JavaMail sends the report automatically through SMTP.  
 6. Every report and email event is saved in the database.
 
-
+---
 
 | Name                 | Role                 |
 | -------------------- | -------------------- |
 | 👩‍💻 Anupriya Gupta | Full Stack Developer |
 | 👨‍💻 Bipin Yashasvi | Full Stack Developer |
+
+---
 
 🌟 Future Enhancements
 
@@ -115,7 +118,7 @@ frontend/index.html in your browser
 
 4. 📱 Mobile responsiveness
 
-
+---
 ## 📜 License
 
 This project was developed as part of a college submission.  
