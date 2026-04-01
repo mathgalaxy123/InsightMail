@@ -89,13 +89,14 @@ mvn spring-boot:run
 👉 Then open:
 frontend/index.html in your browser
 
-📧 How It Works
+## 📧 How It Works
 
-1. Upload CSV file
-2. Data gets parsed & visualized
-3. Charts are converted into PDF
-4. PDF is sent via email
-5. Report stored in history
+1. Upload a CSV file through the UI.  
+2. Backend parses and validates the data.  
+3. Charts (bar, pie, line) are generated using Chart.js.  
+4. iText converts charts and data into a styled PDF report.  
+5. JavaMail sends the report automatically through SMTP.  
+6. Every report and email event is saved in the database.
 
 | Name                 | Role                 |
 | -------------------- | -------------------- |
@@ -111,8 +112,13 @@ frontend/index.html in your browser
 3. 📊 More chart customization
 
 4. 📱 Mobile responsiveness
-   
 
-📜 License
+<img src="[img.shields.io](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions)">
+<img src="[img.shields.io](https://img.shields.io/badge/Contributions-Welcome-blueviolet?style=for-the-badge)">
 
-This project was built as part of a college submission.
+## 📜 License
+
+This project was developed as part of a college submission.  
+You are free to explore, reference, or build upon it for learning purposes.
+
+
