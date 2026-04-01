@@ -98,6 +98,8 @@ frontend/index.html in your browser
 5. JavaMail sends the report automatically through SMTP.  
 6. Every report and email event is saved in the database.
 
+
+
 | Name                 | Role                 |
 | -------------------- | -------------------- |
 | 👩‍💻 Anupriya Gupta | Full Stack Developer |
@@ -113,8 +115,6 @@ frontend/index.html in your browser
 
 4. 📱 Mobile responsiveness
 
-<img src="[img.shields.io](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions)">
-<img src="[img.shields.io](https://img.shields.io/badge/Contributions-Welcome-blueviolet?style=for-the-badge)">
 
 ## 📜 License
 
