@@ -52,8 +52,11 @@ InsightMail is a full-stack web application that transforms raw CSV data into **
 ## 📂 Project Structure  
 InsightMail/
 ├── frontend/ # UI (HTML, CSS, JS)
+
 ├── backend/ # Spring Boot APIs
+
 ├── database/ # MySQL schema
+
 └── README.md
 
 
@@ -82,10 +85,10 @@ cd InsightMail/backend
 # Run Spring Boot server
 mvn spring-boot:run
 
-👉 Then open:
+##👉 Then open:
 frontend/index.html in your browser
 
-📧 How It Works
+##📧 How It Works
 
 1. Upload CSV file
 2. Data gets parsed & visualized
@@ -98,11 +101,12 @@ frontend/index.html in your browser
 | 👩‍💻 Anupriya Gupta | Full Stack Developer |
 | 👨‍💻 Bipin Yashasvi | Full Stack Developer |
 
-🌟 Future Enhancements
+##🌟 Future Enhancements
 📈 Advanced analytics (AI insights)
 ☁️ Cloud deployment (AWS/Docker)
 📊 More chart customization
 📱 Mobile responsiveness
-📜 License
+
+##📜 License
 
 This project was built as part of a college submission.
