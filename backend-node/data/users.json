@@ -1,0 +1,150 @@
+[
+  {
+    "id": "1776360840798",
+    "name": "Anupriya",
+    "email": "guptaanupriya133@gmail.com",
+    "password": "$2b$10$8066hxKfzMkwBdfcxzXlquuh2lv6h13gUeDuZ0oGtd43GEn/e6J/S",
+    "smtp": {
+      "host": "",
+      "port": 587,
+      "user": "",
+      "pass": ""
+    },
+    "createdAt": "2026-04-16T17:34:00.798Z"
+  },
+  {
+    "id": "1776360953879",
+    "name": "Zozo",
+    "email": "zozoanu78@gmail.com",
+    "password": "$2b$10$6RMIHIcfVuXR3fhhNxF8U.uBQVTRbn/r6DT5OdotEE9kWfmQvEg/G",
+    "smtp": {
+      "host": "smtp.gmail.com",
+      "port": 587,
+      "user": "zozoanu789@gmail.com",
+      "pass": "unpr wwmz ozpr rbpd"
+    },
+    "createdAt": "2026-04-16T17:35:53.879Z",
+    "history": [
+      {
+        "id": 1776365778325,
+        "fileName": "students.csv",
+        "uploadDate": "2026-04-16T18:56:18.325Z",
+        "rowCount": 5,
+        "headers": [
+          "Name",
+          "Age",
+          "Course",
+          "City"
+        ],
+        "netProfit": 102,
+        "status": "profit",
+        "parsedAt": "2026-04-16T18:56:15.654Z"
+      },
+      {
+        "id": 1776365742870,
+        "fileName": "students.csv",
+        "uploadDate": "2026-04-16T18:55:42.870Z",
+        "rowCount": 5,
+        "headers": [
+          "Name",
+          "Age",
+          "Course",
+          "City"
+        ],
+        "netProfit": 102,
+        "status": "profit",
+        "parsedAt": "2026-04-16T18:55:40.218Z"
+      },
+      {
+        "id": 1776364876431,
+        "fileName": "students.csv",
+        "uploadDate": "2026-04-16T18:41:16.431Z",
+        "rowCount": 5,
+        "headers": [
+          "Name",
+          "Age",
+          "Course",
+          "City"
+        ],
+        "netProfit": 102,
+        "status": "profit",
+        "parsedAt": "2026-04-16T18:41:13.448Z"
+      },
+      {
+        "id": 1776361837875,
+        "fileName": "students.csv",
+        "uploadDate": "2026-04-16T17:50:37.875Z",
+        "rowCount": 5,
+        "headers": [
+          "Name",
+          "Age",
+          "Course",
+          "City"
+        ],
+        "netProfit": 102,
+        "status": "profit",
+        "parsedAt": "2026-04-16T17:50:34.941Z"
+      }
+    ]
+  },
+  {
+    "id": "1776367661043",
+    "name": "Zozo",
+    "email": "zozoanu789@gmail.com",
+    "password": "$2b$10$ZP7t78jJogWs06AcJFXMWui.wQ/QTbJC9fgVHrw9yLjh7l2pycHda",
+    "smtp": {
+      "host": "smtp.gmail.com",
+      "port": 587,
+      "user": "zozoanu789@gmail.com",
+      "pass": "kyru fgkl cupy gidw"
+    },
+    "history": [
+      {
+        "id": 1776401093698,
+        "fileName": "large_dataset.csv",
+        "uploadDate": "2026-04-17T04:44:53.698Z",
+        "rowCount": 200,
+        "headers": [
+          "Month",
+          "Current_Revenue",
+          "Previous_Revenue",
+          "Expenses"
+        ],
+        "netProfit": 22100000,
+        "status": "profit",
+        "parsedAt": "2026-04-17T04:44:48.750Z"
+      },
+      {
+        "id": 1776368563560,
+        "fileName": "large_dataset_comparison.csv",
+        "uploadDate": "2026-04-16T19:42:43.560Z",
+        "rowCount": 200,
+        "headers": [
+          "Month",
+          "Current_Revenue",
+          "Previous_Revenue",
+          "Expenses"
+        ],
+        "netProfit": 11460417,
+        "status": "profit",
+        "parsedAt": "2026-04-16T19:42:40.869Z"
+      },
+      {
+        "id": 1776368433288,
+        "fileName": "large_dataset.csv",
+        "uploadDate": "2026-04-16T19:40:33.288Z",
+        "rowCount": 200,
+        "headers": [
+          "Month",
+          "Current_Revenue",
+          "Previous_Revenue",
+          "Expenses"
+        ],
+        "netProfit": 22100000,
+        "status": "profit",
+        "parsedAt": "2026-04-16T19:40:29.885Z"
+      }
+    ],
+    "createdAt": "2026-04-16T19:27:41.043Z"
+  }
+]

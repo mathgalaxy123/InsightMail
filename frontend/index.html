@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InsightMail — CSV Analytics & Email Reporting Platform</title>
+  <meta name="description" content="Upload CSV files, generate beautiful interactive charts with profit/loss analysis, and email reports directly from InsightMail." />
+
+  <!-- Fonts (loads from Google if online, gracefully degrades offline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" /></noscript>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Chart.js Zoom Plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <!-- Chart.js Annotation Plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+  <!-- Chart.js Data Labels -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+  <!-- PapaParse -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- html2canvas + jsPDF -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <span class="logo-text">InsightMail</span>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a href="#" class="nav-item active" data-tab="home" id="nav-home">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="nav-label">Home</span>
+      <div class="nav-indicator"></div>
+    </a>
+    <a href="#" class="nav-item" data-tab="dashboard" id="nav-dashboard">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      <span class="nav-label">Dashboard</span>
+      <div class="nav-indicator"></div>
+    </a>
+    <a href="#" class="nav-item" data-tab="history" id="nav-history">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span class="nav-label">History</span>
+      <span class="nav-badge" id="historyBadge">0</span>
+      <div class="nav-indicator"></div>
+    </a>
+
+    <div class="nav-section-label" style="margin-top: 1rem;">Reports</div>
+    <a href="#" class="nav-item" data-tab="reports" id="nav-reports">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <span class="nav-label">Send Report</span>
+      <div class="nav-indicator"></div>
+    </a>
+    <a href="#" class="nav-item" data-tab="profile" id="nav-profile">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="nav-label">Profile</span>
+      <div class="nav-indicator"></div>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="theme-toggle-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <span class="nav-label">Light Mode</span>
+      <button class="toggle-switch" id="themeToggle" aria-label="Toggle theme">
+        <span class="toggle-thumb"></span>
+      </button>
+      <button class="btn-ghost btn-sm" id="logoutBtn" style="margin-top:0.5rem;width:100%;justify-content:flex-start;padding-left:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:8px">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════ MAIN CONTENT ═══════════════════════════ -->
+<div class="main-wrapper" id="mainWrapper">
+
+  <!-- TOP NAVBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="globalSearch" placeholder="Search files, reports…" autocomplete="off" />
+        <kbd>Ctrl+K</kbd>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+        <span class="notif-dot"></span>
+      </button>
+      <div class="user-avatar" id="userAvatar">
+        <span id="avatarInitials">U</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main class="page-content">
+
+    <!-- ─────────────── HOME TAB ─────────────── -->
+    <section class="tab-page active" id="tab-home">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Welcome to InsightMail</h1>
+          <p class="page-subtitle">Upload your CSV file to generate instant data insights and send beautiful email reports</p>
+        </div>
+      </div>
+
+      <!-- Hero Upload Zone -->
+      <div class="hero-section">
+        <div class="upload-zone glass-card" id="uploadZone">
+          <div class="upload-icon-wrap">
+            <svg class="upload-main-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <div class="upload-rings">
+              <div class="ring ring-1"></div>
+              <div class="ring ring-2"></div>
+              <div class="ring ring-3"></div>
+            </div>
+          </div>
+          <h2 class="upload-title">Drag &amp; Drop your CSV file here</h2>
+          <p class="upload-subtitle">or click to browse — supports .csv files up to 50MB</p>
+          <button class="btn-primary" id="browseBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Choose File
+          </button>
+          <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
+          <p class="upload-hint">Keyboard shortcut: <kbd>Ctrl+U</kbd></p>
+        </div>
+
+        <!-- File Preview Card -->
+        <div class="file-preview glass-card hidden" id="filePreview">
+          <div class="file-preview-header">
+            <div class="file-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div>
+              <div class="file-name" id="previewFileName">—</div>
+              <div class="file-meta" id="previewFileMeta">—</div>
+            </div>
+            <button class="btn-ghost btn-sm" id="removeFileBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <div class="column-preview" id="columnPreview"></div>
+          <button class="btn-primary btn-full" id="generateReportBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+            </svg>
+            Generate Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Files -->
+      <div class="section-header" style="margin-top:2rem">
+        <h2 class="section-title">Recent Files</h2>
+        <button class="btn-ghost btn-sm" id="clearHistoryBtnHome">Clear All</button>
+      </div>
+      <div id="recentFilesList">
+        <div class="empty-state" id="emptyRecentFiles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:64px;height:64px;opacity:.3">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <p>No files uploaded yet. Start by adding a CSV above.</p>
+        </div>
+        <div class="recent-grid" id="recentGrid"></div>
+      </div>
+
+      <!-- Sample CSV download -->
+      <div class="glass-card" style="padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:1.5rem">
+        <div>
+          <div style="font-weight:600;font-size:.95rem">Need sample data?</div>
+          <div style="font-size:.82rem;opacity:.6;margin-top:.2rem">Download our sample CSV to test all features instantly</div>
+        </div>
+        <button class="btn-secondary" id="downloadSampleCsv">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download Sample CSV
+        </button>
+      </div>
+    </section>
+
+    <!-- ─────────────── DASHBOARD TAB ─────────────── -->
+    <section class="tab-page" id="tab-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle" id="dashboardSubtitle">Upload a CSV file to see your analytics</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-secondary" id="exportPdfBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Export PDF
+          </button>
+          <button class="btn-primary" id="openMailFromDash">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            Send Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard No Data State -->
+      <div id="dashboardEmptyState" class="empty-dashboard">
+        <div class="empty-dashboard-content">
+          <div class="empty-animation">
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="60" cy="60" r="50" stroke="var(--primary)" stroke-width="2" stroke-dasharray="8 4" opacity="0.4"/>
+              <rect x="25" y="55" width="15" height="35" rx="3" fill="var(--primary)" opacity="0.3"/>
+              <rect x="45" y="40" width="15" height="50" rx="3" fill="var(--profit)" opacity="0.3"/>
+              <rect x="65" y="65" width="15" height="25" rx="3" fill="var(--loss)" opacity="0.3"/>
+              <rect x="85" y="48" width="15" height="42" rx="3" fill="var(--primary)" opacity="0.3"/>
+              <polyline points="20,75 40,55 60,65 80,45 100,50" stroke="var(--profit)" stroke-width="2" fill="none" stroke-dasharray="4 2" opacity="0.6"/>
+            </svg>
+          </div>
+          <h2>No Data Yet</h2>
+          <p>Upload a CSV file in the Home tab to see beautiful charts and analytics here.</p>
+          <button class="btn-primary" id="goToUploadBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Upload CSV File
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard Charts (shown after upload) -->
+      <div id="dashboardContent" class="hidden">
+        <!-- Column Mapper -->
+        <div class="glass-card column-mapper" id="columnMapper">
+          <h3 class="mapper-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            Column Mapping
+          </h3>
+          <div class="mapper-grid">
+            <div class="mapper-field">
+              <label>Label / Category Column</label>
+              <select id="labelColSelect" class="select-input"></select>
+            </div>
+            <div class="mapper-field">
+              <label>Current Value Column</label>
+              <select id="currentColSelect" class="select-input"></select>
+            </div>
+            <div class="mapper-field">
+              <label>Previous Period Column</label>
+              <select id="previousColSelect" class="select-input">
+                <option value="">— None —</option>
+              </select>
+            </div>
+          </div>
+          <div class="mapper-actions">
+            <div class="filter-group">
+              <button class="filter-btn active" data-filter="both" id="filterBoth">Show Both</button>
+              <button class="filter-btn profit" data-filter="profit" id="filterProfit">
+                <span class="dot profit-dot"></span>Profit Only
+              </button>
+              <button class="filter-btn loss" data-filter="loss" id="filterLoss">
+                <span class="dot loss-dot"></span>Loss Only
+              </button>
+            </div>
+            <button class="btn-primary btn-sm" id="applyMappingBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Apply &amp; Render
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-row" id="summaryCards">
+          <div class="summary-card glass-card" id="cardRevenue">
+            <div class="card-top">
+              <span class="card-label">Total (Current)</span>
+              <div class="card-icon-wrap revenue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-value" id="cardRevenueVal">—</div>
+            <div class="card-change" id="cardRevenueChange">—</div>
+          </div>
+          <div class="summary-card glass-card" id="cardExpenses">
+            <div class="card-top">
+              <span class="card-label">Total (Previous)</span>
+              <div class="card-icon-wrap expenses">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-value" id="cardExpensesVal">—</div>
+            <div class="card-change" id="cardExpensesChange">—</div>
+          </div>
+          <div class="summary-card glass-card" id="cardProfit">
+            <div class="card-top">
+              <span class="card-label">Net Difference</span>
+              <div class="card-icon-wrap profit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-value" id="cardProfitVal">—</div>
+            <div class="card-change" id="cardProfitChange">—</div>
+          </div>
+          <div class="summary-card glass-card" id="cardMargin">
+            <div class="card-top">
+              <span class="card-label">Change %</span>
+              <div class="card-icon-wrap margin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+                  <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-value" id="cardMarginVal">—</div>
+            <div class="card-change" id="cardMarginChange">—</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+          <!-- Bar Chart -->
+          <div class="chart-card glass-card" id="barChartCard">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Period Comparison</h3>
+                <p class="chart-desc">Current vs Previous period — green = positive, red = negative</p>
+              </div>
+              <div class="chart-actions">
+                <button class="icon-btn-sm" onclick="resetZoom('barChart')" title="Reset zoom">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                </button>
+                <button class="icon-btn-sm" onclick="downloadChart('barChart', 'bar-chart')" title="Download PNG">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Line Chart -->
+          <div class="chart-card glass-card" id="lineChartCard">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Trend Analysis</h3>
+                <p class="chart-desc">Performance trend over time with area fill</p>
+              </div>
+              <div class="chart-actions">
+                <button class="icon-btn-sm" onclick="resetZoom('lineChart')" title="Reset zoom">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                </button>
+                <button class="icon-btn-sm" onclick="downloadChart('lineChart', 'line-chart')" title="Download PNG">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="lineChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Donut Chart -->
+          <div class="chart-card glass-card" id="donutChartCard">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Category Distribution</h3>
+                <p class="chart-desc">Category-wise revenue split</p>
+              </div>
+              <div class="chart-actions">
+                <button class="icon-btn-sm" onclick="downloadChart('donutChart', 'donut-chart')" title="Download PNG">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap donut-wrap">
+              <canvas id="donutChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Area/Difference Chart -->
+          <div class="chart-card glass-card" id="areaChartCard">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Relative Change</h3>
+                <p class="chart-desc">Net difference between current and previous period</p>
+              </div>
+              <div class="chart-actions">
+                <button class="icon-btn-sm" onclick="resetZoom('areaChart')" title="Reset zoom">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                </button>
+                <button class="icon-btn-sm" onclick="downloadChart('areaChart', 'delta-chart')" title="Download PNG">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="areaChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="glass-card data-table-card" style="margin-top:1.5rem">
+          <div class="chart-header">
+            <h3 class="chart-title">Raw Data Preview</h3>
+            <button class="btn-ghost btn-sm" id="toggleTableBtn">Hide Table</button>
+          </div>
+          <div id="dataTableWrap">
+            <div class="table-scroll">
+              <table class="data-table" id="dataTable">
+                <thead id="dataTableHead"></thead>
+                <tbody id="dataTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!-- /dashboardContent -->
+
+      <!-- Loading Skeleton -->
+      <div id="dashboardLoading" class="hidden">
+        <div class="skeleton-grid">
+          <div class="skeleton-card skeleton-summary"></div>
+          <div class="skeleton-card skeleton-summary"></div>
+          <div class="skeleton-card skeleton-summary"></div>
+          <div class="skeleton-card skeleton-summary"></div>
+        </div>
+        <div class="skeleton-grid" style="margin-top:1.5rem">
+          <div class="skeleton-card skeleton-chart"></div>
+          <div class="skeleton-card skeleton-chart"></div>
+        </div>
+        <div class="skeleton-grid" style="margin-top:1.5rem">
+          <div class="skeleton-card skeleton-chart"></div>
+          <div class="skeleton-card skeleton-chart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── HISTORY TAB ─────────────── -->
+    <section class="tab-page" id="tab-history">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Upload History</h1>
+          <p class="page-subtitle">All previously processed CSV files</p>
+        </div>
+        <div class="header-actions">
+          <div class="filter-row">
+            <input type="date" id="filterDateFrom" class="date-input" title="From date" />
+            <span style="opacity:.5;font-size:.9rem">→</span>
+            <input type="date" id="filterDateTo" class="date-input" title="To date" />
+            <select id="filterStatus" class="select-input" style="min-width:130px">
+              <option value="all">All Results</option>
+              <option value="profit">Positive Only</option>
+              <option value="loss">Negative Only</option>
+            </select>
+            <button class="btn-secondary btn-sm" id="applyHistoryFilter">Filter</button>
+            <button class="btn-ghost btn-sm" id="clearHistoryFilter">Clear</button>
+            <button class="btn-danger-outline btn-sm" id="clearHistoryBtn" style="margin-left:0.5rem">Clear History</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state-large" id="historyEmpty">
+        <div class="empty-illus">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="30" width="160" height="100" rx="8" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1.5"/>
+            <rect x="35" y="50" width="80" height="8" rx="4" fill="var(--border)" opacity="0.6"/>
+            <rect x="35" y="66" width="60" height="6" rx="3" fill="var(--border)" opacity="0.4"/>
+            <rect x="35" y="80" width="70" height="6" rx="3" fill="var(--border)" opacity="0.4"/>
+            <rect x="35" y="94" width="50" height="6" rx="3" fill="var(--border)" opacity="0.4"/>
+            <circle cx="155" cy="45" r="18" fill="var(--primary)" opacity="0.15" stroke="var(--primary)" stroke-width="1.5"/>
+            <path d="M155 37v8l4 4" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+          </svg>
+        </div>
+        <h3>No Files Uploaded Yet</h3>
+        <p>Your upload history will appear here. Start by uploading a CSV file.</p>
+        <button class="btn-primary" id="historyGoUpload">Upload CSV</button>
+      </div>
+
+      <!-- History Table -->
+      <div class="glass-card" id="historyTableWrap" style="display:none">
+        <div class="table-scroll">
+          <table class="data-table history-table">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Upload Date</th>
+                <th>Rows</th>
+                <th>Net Result</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── REPORTS TAB ─────────────── -->
+    <section class="tab-page" id="tab-reports">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Send Report</h1>
+          <p class="page-subtitle">Compose and send your analytics report via email</p>
+        </div>
+      </div>
+
+      <div class="reports-layout">
+        <!-- Compose Form -->
+        <div class="compose-form glass-card">
+          <h3 class="section-title" style="margin-bottom:1.5rem">Compose Email</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="recipientEmail">Recipient Email *</label>
+            <input type="email" id="recipientEmail" class="form-input" placeholder="recipient@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mailSubject">Subject</label>
+            <input type="text" id="mailSubject" class="form-input" value="InsightMail Analytics Report" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mailBody">Message</label>
+            <textarea id="mailBody" class="form-input form-textarea" rows="5" placeholder="Hi,&#10;&#10;Please find your analytics report attached.&#10;&#10;Best regards,&#10;InsightMail"></textarea>
+          </div>
+
+          <!-- Chart Selector -->
+          <div class="form-group">
+            <label class="form-label">Include Charts</label>
+            <div class="chart-checkboxes">
+              <label class="checkbox-item">
+                <input type="checkbox" id="inclBar" checked />
+                <span class="checkmark"></span>
+                Bar Chart (Comparison)
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="inclLine" checked />
+                <span class="checkmark"></span>
+                Line Chart (Trend)
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="inclDonut" checked />
+                <span class="checkmark"></span>
+                Donut Chart (Distribution)
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="inclArea" checked />
+                <span class="checkmark"></span>
+                Delta Chart (P&amp;L)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Options</label>
+            <label class="toggle-item">
+              <input type="checkbox" id="inclCsvData" />
+              <span class="checkmark"></span>
+              Include raw CSV data in email body
+            </label>
+          </div>
+
+          <button class="btn-primary btn-full btn-large" id="sendReportBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Send Report
+          </button>
+        </div>
+
+        <!-- Preview Pane -->
+        <div class="preview-pane">
+          <h3 class="section-title" style="margin-bottom:1rem">Email Preview</h3>
+          <div class="email-preview glass-card" id="emailPreview">
+            <div class="email-preview-header">
+              <div class="email-meta-row"><span class="email-meta-key">From:</span> <span>InsightMail &#x3C;noreply@insightmail.app&#x3E;</span></div>
+              <div class="email-meta-row"><span class="email-meta-key">To:</span> <span id="previewTo">—</span></div>
+              <div class="email-meta-row"><span class="email-meta-key">Subject:</span> <span id="previewSubject">—</span></div>
+            </div>
+            <div class="email-preview-body" id="emailPreviewBody">
+              <p style="opacity:.5;font-size:.9rem;text-align:center;padding:2rem">Fill in the form to see the email preview</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── PROFILE TAB ─────────────── -->
+    <section class="tab-page" id="tab-profile">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Profile &amp; Settings</h1>
+          <p class="page-subtitle">Manage your account and SMTP configuration</p>
+        </div>
+      </div>
+
+      <div class="profile-layout">
+        <!-- User Info -->
+        <div class="glass-card profile-card">
+          <div class="avatar-section">
+            <div class="avatar-large" id="profileAvatarCircle">
+              <span id="profileInitials">U</span>
+            </div>
+            <div>
+              <div class="form-group">
+                <label class="form-label" for="profileName">Display Name</label>
+                <input type="text" id="profileName" class="form-input" placeholder="Your Name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profileEmail">Email Address</label>
+                <input type="email" id="profileEmail" class="form-input" placeholder="you@example.com" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMTP Settings -->
+        <div class="glass-card smtp-card">
+          <h3 class="section-title" style="margin-bottom:1.5rem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;vertical-align:middle;margin-right:.5rem">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            SMTP Configuration
+          </h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="smtpHost">SMTP Host</label>
+              <input type="text" id="smtpHost" class="form-input" placeholder="smtp.gmail.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="smtpPort">Port</label>
+              <input type="number" id="smtpPort" class="form-input" placeholder="587" value="587" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="smtpUser">Username (Email)</label>
+              <input type="text" id="smtpUser" class="form-input" placeholder="you@gmail.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="smtpPass">App Password</label>
+              <div class="input-with-toggle">
+                <input type="password" id="smtpPass" class="form-input" placeholder="••••••••••••" />
+                <button class="input-toggle-btn" id="togglePass" type="button" aria-label="Toggle password visibility">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="smtp-hint glass-card" style="background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.2);padding:.75rem 1rem;margin-bottom:1.5rem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="width:16px;height:16px;flex-shrink:0">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span style="font-size:.83rem;opacity:.8">For Gmail, use an <strong>App Password</strong> (not your main password) — enable 2FA first under Google Account → Security.</span>
+          </div>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+            <button class="btn-primary" id="saveSettingsBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Settings
+            </button>
+            <button class="btn-secondary" id="testSmtpBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Send Test Email
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats panel -->
+        <div class="glass-card stats-panel">
+          <h3 class="section-title" style="margin-bottom:1rem">Your Statistics</h3>
+          <div class="stat-row"><span>Files Uploaded</span><strong id="statFiles">0</strong></div>
+          <div class="stat-row"><span>Reports Sent</span><strong id="statReports">0</strong></div>
+          <div class="stat-row"><span>Member Since</span><strong id="statSince">—</strong></div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /page-content -->
+</div><!-- /main-wrapper -->
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer" aria-live="polite"></div>
+
+<!-- SCRIPTS -->
+<script src="csvParser.js"></script>
+<script src="charts.js"></script>
+<script src="mailer.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
